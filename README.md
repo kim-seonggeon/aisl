@@ -14,3 +14,21 @@
 ### 🛠 Tech Stack
 **Languages**  
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=Python&logoColor=white)
+
+<p><br></p>
+
+---
+
+## March 09, 2026
+
+### 📝 To-Do (03/09/2025)
+
+- [] 
+
+### 📌 Notes
+
+### ✅ Conclusion
+
+<p><br></p>
+
+---
