@@ -3,7 +3,7 @@
 [![KR](https://img.shields.io/badge/README-한국어-blue)](./README.ko.md)
 [![EN](https://img.shields.io/badge/README-English-red)](./README.md)
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=413fd9&height=150&section=header&text=Getting%20ready...&fontSize=35" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=413fd9&height=150&section=header&text=Unitl%20the%20day%20I%20get%20a%20job%20at%20the%20company%20I%20want%20to%20go%20to...&fontSize=35" />
 
 ## 🧠 About AISL PROJECT
 
