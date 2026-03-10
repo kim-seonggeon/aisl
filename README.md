@@ -19,11 +19,28 @@
 
 ---
 
+## March 10, 2026
+
+### 📝 To-Do (03/10/2026)
+
+- [] A serious interview with the professor (regarding the selection of personal research topics)
+- [] SLAM testing based on public datasets in the lab
+
+### 📌 Notes
+
+- 
+
+### ✅ Conclusion
+
+<p><br></p>
+
+---
+
 ## March 09, 2026
 
 ### 📝 To-Do (03/09/2025)
 
-- [X] Research to choose an acuurate personal research topic
+- [X] Research to choose an accurate personal research topic
 
 ### 📌 Notes
 
@@ -54,6 +71,9 @@
       - International conference + Master's thesis completion
 
 ### ✅ Conclusion
+
+- First of all, I will have a serious conversation with the professor about the three ways I thought and find the exact direction
+- And with a dataset that can be used easily in the laboratory, I need to get a sense of SLAM with a simple test
 
 <p><br></p>
 
