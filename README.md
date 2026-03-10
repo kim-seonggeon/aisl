@@ -29,13 +29,13 @@
 ### 📌 Notes
 
 - The professor also liked the topics I thought of and gave me advice on the second one because another lab member is doing it, so I will proceed with the 1st and 3rd in a good relationship
-- In the first topic, the 'communication constraint' condition lacks a lot of knowledge in the field of communication and thus passes (or changes to some constraint)
-- Take the first topic as the main subject and expand it to the third topic, the third is the master's papers, and the mission plan is not to use AI
-- Sparse(including feature) Map Merging appears to be a necessary and practical study in the commercial and defense sectors
-- The test starts with the simulation(Matlab, etc.) with the algorithm as important
-- Catch the baseline well
-- Try ICP+VSLs combination well
-- Geometric information (location information of landmarks) + class information
+  - In the first topic, the 'communication constraint' condition lacks a lot of knowledge in the field of communication and thus passes (or changes to some constraint)
+  - Take the first topic as the main subject and expand it to the third topic, the third is the master's papers, and the mission plan is not to use AI
+  - Sparse(including feature) Map Merging appears to be a necessary and practical study in the commercial and defense sectors
+  - The test starts with the simulation(Matlab, etc.) with the algorithm as important
+  - Catch the baseline well
+  - Try ICP+VSLs combination well
+  - Geometric information (location information of landmarks) + class information
 - I tried SLAM test based on public dataset, but I ran into a lot of unexpected problems and asked for help from Lab member who studied about it tomorrow
 
 ### ✅ Conclusion
