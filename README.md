@@ -23,14 +23,25 @@
 
 ### 📝 To-Do (03/10/2026)
 
-- [] A serious interview with the professor (regarding the selection of personal research topics)
-- [] SLAM testing based on public datasets in the lab
+- [X] A serious interview with the professor (regarding the selection of personal research topics)
+- [X] SLAM testing based on public datasets
 
 ### 📌 Notes
 
-- 
+- The professor also liked the topics I thought of and gave me advice on the second one because another lab member is doing it, so I will proceed with the 1st and 3rd in a good relationship
+- In the first topic, the 'communication constraint' condition lacks a lot of knowledge in the field of communication and thus passes (or changes to some constraint)
+- Take the first topic as the main subject and expand it to the third topic, the third is the master's papers, and the mission plan is not to use AI
+- Sparse(including feature) Map Merging appears to be a necessary and practical study in the commercial and defense sectors
+- The test starts with the simulation(Matlab, etc.) with the algorithm as important
+- Catch the baseline well
+- Try ICP+VSLs combination well
+- Geometric information (location information of landmarks) + class information
+- I tried SLAM test based on public dataset, but I ran into a lot of unexpected problems and asked for help from Lab member who studied about it tomorrow
 
 ### ✅ Conclusion
+
+- Read and study the papers that the professor sent and recommeded
+- Tomorrow, learn SLAM test based on public dataset and make sure it's mine
 
 <p><br></p>
 
@@ -48,10 +59,6 @@
 - Since employment in a defense company is my ultimate goal, I investigate what kind of SW, R&D talent I want from a defense company should select to enter the company and do it well
   - If I think about employment first, you need to understand C++/Python-based algorithm implementation capabilties, practical projects and papers related to 'unmanned/robot', and practical SW architectures that can be implanted in various robot platforms (e.g., 4th leg on the ground, UGV, USV, etc.)
   - Environmental characteristics considered when using multi-robot SLAM in defence or battlefield include GNSS vulnerability (indoor, underground, disaster/electric field, electronic warfare environment), communication delay and disruption (distributed and robust SLAM and clustering required), mixing multiple heterogeneous robots (four-legged walking, UGV, drone, USV, etc.) and sensor restrictions or partially obscured (smoke, dust, dark environment, limited FoV LiDAR, etc.)
-  - Based on this, try to compress about three topics that fit well into the defense company robot/unmanned system and are good for thesis and portfolio
-  1. Distributed Multi-Robot SLAM: Without a central server (or least dependent), robots pose with partial maps, and distributed or quasi-distributed SLAMs that gradually match global maps in the event of communication loss or delay
-  2. Robust Multi-Robot SLAM: Multi-SLAM cooperatively increases recognition performance under sensor treaty conditions common in defense environments such as limited FoV LiDAR, noisy IMU, camera obscuration, etc
-  3. Multi-robot SLAM based cluster mission planning (MUM-T in mind): a study that connects multi-SLAM results (shared maps, uncertainty of each robot) directly to cluster path planning, exploration, and surveillance mission assignments
   - Among them, if the thesis and demonstration are implemented within 2 years of the master's degree, 'Distributed Multi-Robot SLAM and Reconnaissance Mission Plan Considering Communication and Sensor Constraints' is a big topic, and SLAM is attached in the 1st year and mission plan/group is appropriate in the 2nd year
  
 - Brief Master's 1st to 2nd Year Roadmap (Research + Job Preparation)
