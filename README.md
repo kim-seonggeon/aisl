@@ -31,6 +31,7 @@
   - It was very difficult because I experienced several out-of-memory problems in the middle, but I successfully ran OpenVINS simulation
   - The two screens after completion of the drive are performance indicators and visualization results showing how accurately OpenVINS estimates the robot's movement(trajectory)
   - First Image : Trajectory visualization (a drawing of the robot's path on a 2D plane)
+  - <img src="Image/Trajectory%20visualization.jpg" width="200"/></a>
   - Second Image : estimation accuracy (a ddta window that numerically shows "how different is the position I calculated from the real thing?" as the simulation goes back to real time)
 
 ### ✅ Conclusion
