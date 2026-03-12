@@ -1,4 +1,4 @@
-# AISL PROJECT
+# AISL's journey
 
 [![KR](https://img.shields.io/badge/README-한국어-blue)](./README.ko.md)
 [![EN](https://img.shields.io/badge/README-English-red)](./README.md)
@@ -18,6 +18,21 @@
 <p><br></p>
 
 ---
+
+## March 11, 2026
+
+### 📝 To-Do (03/11/2026)
+- 
+
+### 📌 Notes
+- 
+
+### ✅ Conclusion
+- 
+
+<p><br></p>
+
+--- 
 
 ## March 10, 2026
 
