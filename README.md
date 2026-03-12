@@ -22,10 +22,16 @@
 ## March 11, 2026
 
 ### 📝 To-Do (03/11/2026)
-- 
+
+- SLAM testing based on public datasets in the lab
+- Reading the papers I received from the professor
 
 ### 📌 Notes
-- 
+- If I switch to Visual SLAM based, what I want is ORB-SLAM, but I decided to test this first by recommending the OpenVINS algorithm to lab member who has experience in switching to Visual SLAM based because there are many dependence problems during installation (https://github.com/rpng/open_vins <- Reference)
+  - It was very difficult because I experienced several out-of-memory problems in the middle, but I successfully ran OpenVINS simulation
+  - The two screens after completion of the drive are performance indicators and visualization results showing how accurately OpenVINS estimates the robot's movement(trajectory)
+  - First Image : Trajectory visualization (a drawing of the robot's path on a 2D plane)
+  - Second Image : estimation accuracy (a ddta window that numerically shows "how different is the position I calculated from the real thing?" as the simulation goes back to real time)
 
 ### ✅ Conclusion
 - 
