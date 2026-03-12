@@ -23,20 +23,25 @@
 
 ### 📝 To-Do (03/11/2026)
 
-- SLAM testing based on public datasets in the lab
+- SLAM testing based on public datasets
 - Reading the papers I received from the professor
 
 ### 📌 Notes
-- If I switch to Visual SLAM based, what I want is ORB-SLAM, but I decided to test this first by recommending the OpenVINS algorithm to lab member who has experience in switching to Visual SLAM based because there are many dependence problems during installation (https://github.com/rpng/open_vins <- Reference)
+
+- If I switch to Visual SLAM based, what I want is ORB-SLAM, but I decided to test this first by recommending the OpenVINS project to lab member who has experience in switching to Visual SLAM based because there are many dependence problems during installation (https://github.com/rpng/open_vins <- Reference)
   - It was very difficult because I experienced several out-of-memory problems in the middle, but I successfully ran OpenVINS simulation
   - The two screens after completion of the drive are performance indicators and visualization results showing how accurately OpenVINS estimates the robot's movement(trajectory)
   - First Image : Trajectory visualization (a drawing of the robot's path on a 2D plane)
-<img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/Trajectory%20Visualization.jpeg" width="250"/>
   - Second Image : estimation accuracy (a ddta window that numerically shows "how different is the position I calculated from the real thing?" as the simulation goes back to real time)
+<img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/Trajectory%20Visualization.jpeg" width="250"/>
 <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/Estimation%20Accuracy.png" width="250"/>
 
+- The paper received from the professor presents a non-repetitive VSLs-based technique that significantly improves the accuracy and efficiency of feature map merging in multi-robot systems, which makes an important contribution to real-time robot system implementation
+
 ### ✅ Conclusion
-- 
+
+- Proceed with what to do after the OpenVINS project
+- Continue reading VSLs-based technical papers
 
 <p><br></p>
 
