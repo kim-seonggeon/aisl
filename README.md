@@ -19,6 +19,18 @@
 
 ---
 
+## March 13, 2026
+
+### 📝 To-Do (03/12/2026)
+
+### 📌 Notes
+
+### ✅ Conclusion
+
+<p><br></p>
+
+---
+
 ## March 12, 2026
 
 ### 📝 To-Do (03/12/2026)
@@ -35,6 +47,10 @@
 
 - Test with a dataset other than the one we did today
 - Study OpenVINS accurately
+
+<p><br></p>
+
+---
 
 ## March 11, 2026
 
