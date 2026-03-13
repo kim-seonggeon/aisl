@@ -19,12 +19,29 @@
 
 ---
 
+## March 12, 2026
+
+### 📝 To-Do (03/12/2026)
+
+- [X] Test the OpenVINS algorithm
+
+### 📌 Notes
+
+- I used the data set provided by EuRoC, but I couldn't find it at this point, so I tested it based on the public data provided by KITTI, but I couldn't see anything on the rviz screen and continuous error on the terminal running the launcher file
+  - The cause of the problem shows that the KITTI dataset violated static initalization conditions due to initial operation with [Init]: failed static init: platform moving too much, and the original calibration value of KITTI is different from the Kalibr format used by OpenVINS. It does not just change the name of the topic, but if the tranformation matrix (T) between the acceleration/gyro noise model for KITTI and the camera-IMU is not directly calculated and inserted, the filter will immediately diverge
+- While I was combing through the tutorials provided by OpenVINS, the data(ros1 cannot be downloaded at this time, https://docs.openvins.com/gs-datasets.html <- conference) can be downloaded as a zip file. There is a command that can convert the ros2 file to ros1 after downloading, so I converted it and tested it successfully
+
+### ✅ Conclusion
+
+- Test with a dataset other than the one we did today
+- Study OpenVINS accurately
+
 ## March 11, 2026
 
 ### 📝 To-Do (03/11/2026)
 
-- SLAM testing based on public datasets
-- Reading the papers I received from the professor
+- [X] SLAM testing based on public datasets
+- [X] Reading the papers I received from the professor
 
 ### 📌 Notes
 
