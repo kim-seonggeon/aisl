@@ -43,6 +43,9 @@
   - The cause of the problem shows that the KITTI dataset violated static initalization conditions due to initial operation with [Init]: failed static init: platform moving too much, and the original calibration value of KITTI is different from the Kalibr format used by OpenVINS. It does not just change the name of the topic, but if the tranformation matrix (T) between the acceleration/gyro noise model for KITTI and the camera-IMU is not directly calculated and inserted, the filter will immediately diverge
 - While I was combing through the tutorials provided by OpenVINS, the data(ros1 cannot be downloaded at this time, https://docs.openvins.com/gs-datasets.html <- conference) can be downloaded as a zip file. There is a command that can convert the ros2 file to ros1 after downloading, so I converted it and tested it successfully
 
+<img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/OpenVINS(KITTI).png" width="250"/>
+<img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/OpenVINS(EuRoC).png" width="250"/>
+
 ### ✅ Conclusion
 
 - Test with a dataset other than the one we did today
