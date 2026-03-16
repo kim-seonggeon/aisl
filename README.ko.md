@@ -19,67 +19,67 @@
 
 ---
 
-## March 13, 2026
+## 2026년 3월 13일
 
-### 📝 To-Do (03/12/2026)
+### 📝 할 일 (2026-03-13)
 
-### 📌 Notes
+### 📌 메모
 
-### ✅ Conclusion
+### ✅ 결론
 
 <p><br></p>
 
 ---
 
-## March 12, 2026
+## 2026년 3월 12일
 
-### 📝 To-Do (03/12/2026)
+### 📝 할 일 (2026-03-12)
 
-### 📌 Notes
+### 📌 메모
 
 <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/OpenVINS(KITTI).png" width="250"/>
 <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/OpenVINS(EuRoC).png" width="250"/>
 
-### ✅ Conclusion
+### ✅ 결론
 
 <p><br></p>
 
 ---
 
-## March 11, 2026
+## 2026년 3월 11일
 
-### 📝 To-Do (03/11/2026)
+### 📝 할 일 (2026-03-11)
 
-### 📌 Notes
+### 📌 메모
 
 <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/Trajectory%20Visualization.jpeg" width="250"/>
 <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/Estimation%20Accuracy.png" width="250"/>
 
-### ✅ Conclusion
+### ✅ 결론
 
 <p><br></p>
 
 --- 
 
-## March 10, 2026
+## 2026년 3월 10일
 
-### 📝 To-Do (03/10/2026)
+### 📝 할 일 (2026-03-10)
 
-### 📌 Notes
+### 📌 메모
 
-### ✅ Conclusion
+### ✅ 결론
 
 <p><br></p>
 
 ---
 
-## March 09, 2026
+## 2026년 3월 09일
 
-### 📝 To-Do (03/09/2025)
+### 📝 할 일 (2026-03-09)
 
-### 📌 Notes
+### 📌 메모
 
-### ✅ Conclusion
+### ✅ 결론
 
 <p><br></p>
 
