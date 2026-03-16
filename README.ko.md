@@ -30,7 +30,7 @@
 
 - OpenVINS에서 제공하는 데이터셋 중 3가지를 골라서 테스트해봄
   - 테스트할 데이터셋이 rosbag은 다운로드가 되지 않아 rosbag2로 다운로드하여 변환 후 rosbag play를 진행함
-- OpenVINS는 이름에서 알 수 있듯이 'Open-Source Visual-Inertial Navigation System'의 약자로, 카메라(Visual)와 관성 측정 장치(IMU, Inertial)를 결합하여 로봇의 위치와 자세를 추정하는 강력한 프레임워크
+- OpenVINS는 이름에서 알 수 있듯이 'Open-Source Visual-Inertial Navigation System'의 약자로, 카메라(Visual)와 관성 측정 장치(IMU, Inertial)를 결합하여 로봇의 위치와 자세를 추정하는 플랫폼
   - 1. OpenVINS의 핵심: MSCKF 기반의 필터 방식
     - 가장 큰 특징은 MSCKF(Multi-State Constraint Kalman Filter) 알고리즘을 사용한다는 점
       - => MSCKF는 IMU와 Camera 센서를 사용하여 고정된 Feature에 대해서 measurement update(새로운 노이즈 센서 측정과 이전 예측 상태를 결합하여 개선되고 더 정확한 사후 추정치를 생성함)를 수행하여 odometry(휠 엔코더, IMU, 카메라 등 모션 센서 데이터를 사용하여 시작 위치를 기준으로 로봇이나 차량의 상대적인 위치와 자세 변화를 추정하는 기술)를 제공하는 알고리즘
