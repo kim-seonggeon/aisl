@@ -49,8 +49,53 @@
   <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/Visual-InertialStateEstimatorDiagram.png" width="450"/>
   
   - VINS-Mono는 우선 Measurement Preprocessing 과정을 거침. 이미지로부터 feature를 뽑아내고, Tracking을 하면서 연속적인 두 이미지 사이에 IMU Measurements를 Preintegrated하는 과정을 거침
+  - Measurement Preprocessing 과정이 끝나면 초기화(Initialization) 과정을 거침. 추후 Non-linear Optimization을 할 때 필요한 값들을 모두 구함. 예를 들어, pose, velocity, gravity vector, gyroscope, bias and 3D 특징 점의 위치 등을 구하게 됨
+  - 초기화 값으로 구한 값을 가지고 Relocalization Module이 있는 Visual-Inertial Odometry Module은 Pre-integrated된 IMU 측정값과 Feature Observations를 tightly-coupled 방법으로 fusion을 진행함
+  - VINS-Mono에서는 Monocular Camera와 IMU 값을 이용하여 초기화하는 방법, Keyframe을 고르는 방법, Tracking을 잘 수행하는 방법등을 제안했으며, Loop Closure와 Pose Graph Reuse 모듈까지 만들어 전체적인 SLAM System을 구축함
+  - 이 논문에서는 사용하는 Notation은 다음과 같음:
+    - $()^c$ : camera frame
+    - $()^w$ : world frame
+    - $()^b$ : IMU frame
+    - $q$ : 쿼터니언, $R$ : Rotation Matrix
+    - $p$ : Translation vector
+    - $b_k$ : $k$번째 이미지에서의 IMU(Body) frame
+    - $c_k$ : $k$번째 이미지에서의 Camera frame
+    - $\otimes$ : 쿼터니언끼리의 곱
+    - $\hat{(\cdot)}$ : 추정 값 or noisy measurement
+   
+- 3. Measurement Preprocessing
+  - Visual Measurement와 IMU Measurement의 전처리 과정을 자세하게 살펴보면, Visual Measurement에서는 연속적인 이미지에서의 Tracking을 시도하고, 현재 frame에서 새로운 특징점을 찾음. IMU Measurements에서는 연속적인 두 이미지에서 Pre-integration 과정을 거침
+  - Vision Processing Front End
+    - 새로운 이미지가 들어오면, KLT Sparse Optical Flow Algorithm을 수행함. Feature를 찾을 때는 GoodFeatureToTrack() 함수를 사용함. 이는 OpenCV()에 있는 함수. 한 이미지당 Feature의 개수는 100~300개 정도를 유지함. Detector는 feature간 너무 붙어 있지 않도록 uniform feature distribution를 적용함
+      - KLT Sparse Optical Flow는 VINS-Mono의 시각적 전처리 단계에서 기존에 찾은 특징점들이 다음 프레임에서 어디로 갔는지 쫓아가는(Tracking) 핵심 알고리즘
+        - KLT 알고리즘의 3개의 가정
+          1. 밝기 불변(Brightness Costancy): 카메라가 아주 짧은 시간동안 움직였을 때, 특정 물체의 밝기나 색상은 변하지 않는다고 가정
+          2. 아주 작은 움직임(Small Motion): 시간이 짧으므로, 물체나 픽셀이 아주 조금만 이동했다고 가정함
+          3. 공간적 일관성(Spatial Coherence): 이것이 KLT의 가장 핵심적인 아이디어. 하나의 픽셀만 추적하면 노이즈 때문에 실패하기 쉬움. 그래서 '이웃한 픽셀들은 모두 같은 방향, 같은 속도로 움직인다'고 가정함
+        - 왜 "Sparse" Optical Flow 인가?
+          => 화면 안의 모든 픽셀 200만 개의 움직임을 다 계산하는 것을 'Dense Optical Flow'라고 함. 하지만 이는 계산량이 너무 많아 실시간으로 작동해야 하는 로봇이나 드론에는 쓸 수 없음
+        - 그래서 VINS-Mono는 화면에서 추적하기 쉬운 모서리(코너) 같은 뚜렷한 특징점 100~300개 정도만 콕콕 집어서 띄엄띄엄 추적함. 계산량이 획기적으로 줄어들고 속도가 엄청나게 빨라짐. VINS-Mono는 매 프레임 KLT로 기존 특징점들을 빠르게 추적하고, 시야에서 벗어난 개수가 줄어들면 그때 새로운 코너를 찾아서 보충함
+      - RANSAC 알고리즘을 이용하여 Outlier 제거를 거친 후, 특징이 추출된 이미지를 unit sphere(단위 구)에 투영을 시킴
+        - RANSAC(Random Sample Consensus)은 수많은 데이터 속에 섞여 있는 '가짜 데이터(Outlier)'를 걸러내고 '진짜 데이터(Inlier)'들만 찾아내어 정답을 맞히는 알고리즘
+        - 앞서 배운 KLT로 특징점들을 추적하다 보면, 카메라가 움직인게 아니라 실제로 움직이는 자동차를 쫓아가거나, 빛 반사 때문에 엉뚱한 곳을 짚는 경우가 생김. 이런 '거짓말하는 점'들을 무시하고 카메라가 진짜 어떻게 움직였는지 찾아내는 것이 RANSAC의 역할임
+          - VINS-Mono에서 RANSAC이 하는 일
+          - VINS-Mono는 KLT로 추적된 점들 사이에서 이 과정을 수행
+            - 입력: 이전 프레임과 현재 프레임에서 매칭된 수백 개의 특징점 쌍
+            - 가설: 무작위로 몇 개의 점만 골라서 "카메라가 이만큼 회전하고 이동했을 거야"라는 모델(Fundamental Matrix 등)을 만듦
+            - 검증: 그 모델을 적용했을 때, 나머지 점들이 "맞아, 나도 그 위치쯤에 있어!"라고 동의하는지 확인함
+            - 결과: 카메라의 실제 움직임과 맞지 않게 튀는 점들(Outlier)은 이때 가차 없이 삭제됨
+          - RANSAC이 좋은 이유
+            - 보통의 알고리즘은 모든 데이터를 평균 내어 계산하려고 함. 그래서 데이터 중에 엄청나게 큰 에러(Outlier)가 하나만 섞여 있어도 결과값이 완전히 망가짐
+            - 반면, RANSAC은 "어차피 가짜가 섞여 있을 테니, 운 좋게 진짜들만 뽑힐 때까지 여러 번 시도해 보겠다"는 전략을 취함. 그래서 데이터의 절반이 가짜라도 시간만 충분하면 정답을 찾아낼 수 있는 아주 강력하고 끈질긴 알고리즘
+      - 이 과정에서 Keyframe 선별도 하게 되는데 두 가지 기준을 가지고 Keyframe을 선별함
+        - Last Frame과 Current Frame 간에 특징점들끼리의 픽셀 차이(Parallax)가 일정 threshold 이상일 경우 새로운 Keyframe으로 구분
+        - Tracking quality에 따라 구분
+      - 특징점끼리의 픽셀 차이를 여기서 Parallax(시차)라고 표현. 이러한 기준을 선정한 이유는 Triangulate를 진행할 때 충분한 Feature 수를 확보하기 위해서이다. 또한 Parallax를 구할 때 Rotation만 일어났을 때만을 대비하여 IMU Measurement에서 측정된 short-term integration of gyroscope measurements를 보상하여 Parallax를 계산함
+      - Tracking Quality는 Visual Feature Point의 수로 판단을 할 수가 있는데, Tracking이 되고 있는 Feature Point의 수가 일정 threshold보다 아래로 떨어지면 새로운 feature들이 많이 생기고, 새로운 상황(이미지 및 장면)을 맞이했다고 이해할 수 있음. 따라서 새로운 상황이라고 판단하면 Keyframe을 선별한다고 이해하면 됨
 
 ### ✅ 결론
+
+- 계속 읽기...
 
 <p><br></p>
 
