@@ -30,7 +30,26 @@
 - OpenVINS의 근원이 VINS의 논문을 찾아서 이 논문을 본격적으로 읽기로 결정
 - [VINS-Mono: A Robust and Versatile Monocular Visual-Inertial State Estimator](https://arxiv.org/pdf/1708.03852)
   - 1. VINS-Mono의 핵심 철학: '모든 것을 한 번에 묶어서 푼다(Tightly-Coupled)'
-  - : 과거에는 카메라가 계산한 위치 따로, IMU가 예측한 위치 따로 구해서 대충 섞는 방식(Loosely-Coupled)을 썼음. 하지만 VINS-Mono는 카메라가 본 특징점 오차(Vision-Residual)와 IMU가 측정한 가속도/각속도 오차(IMU Residual)를 하나의 거대한 방정식으로 묶어서 동시에 최적화함. 이 방식을 'Tightly-Coupled'라고 부름.
+    - : 과거에는 카메라가 계산한 위치 따로, IMU가 예측한 위치 따로 구해서 대충 섞는 방식(Loosely-Coupled)을 썼음. 하지만 VINS-Mono는 카메라가 본 특징점 오차(Vision-Residual)와 IMU가 측정한 가속도/각속도 오차(IMU Residual)를 하나의 거대한 방정식으로 묶어서 동시에 최적화함. 이 방식을 'Tightly-Coupled'라고 부름.
+  - 2. 논문의 4단계 파이프라인(흐름도)
+    - 1. 측정값 전처리(Measurement Preprocessing)
+      - Vision: KLT 알고리즘으로 들어오는 이미지에서 특징점을 추적함
+      - IMU Pre-Integration(사전 적분): IMU는 카메라보다 훨씬 빠름. 카메라 프레임 사이사이에 들어오는 수많은 IMU 데이터를 미리 하나로 뭉쳐놓는 기술임. 특히 VINS-Mono는 이때 IMU의 편향(Bias) 오차까지 실시간으로 보정하는 수식을 제안하여 정확도를 끌어올림
+    - 2. 초기화(Estimator Initialization)
+      - 카메라 한 대(Mono)를 쓰면 실제 거리(Scale)를 알 수 없음
+      - VINS-Mono는 정지 상태가 아니라 로봇이 움직이는 와중(on-the-fly)에도 초기화를 성공시키는 강력한 알고리즘을 제안함. 카메라가 대충 그린 뼈대(Vision-Only SfM)와 IMU 데이터를 정렬시켜서 실제 크기(Scale), 중력 방향, 초기 속도, IMU 편향 값을 한 번에 찾아냄
+    - 3. 슬라이딩 윈도우 기반 VIO(Local VIO)
+      - 최적화 방식은 계산량이 너무 많아진다는 단점이 있음
+      - 이를 해결하기 위해 과거의 데이터는 버리고 최근 N개의 핵심 프레임(Key Frame)만 창문(Window)안에 남겨두고 최적화하는 Sliding Window 기법을 사용함
+      - 이때 오래된 데이터를 윈도우에서 그냥 삭제하지 않고, Marginalization(주변화)이라는 수학적 기법을 통해 과거 데이터가 품고 있던 정보(Prior)를 압축해서 현재 윈도우에 넘겨줌
+    - 4. 4-DOF 글로벌 최적화(Relocalization & Pose Graph Optimization)
+      - 아무리 최적화를 잘해도 오래 주행하면 오차가 누적됨
+      - DBoW2를 이용해 이미 방문했던 장소를 인식(Loop Detection)하면, 현재 위치를 교정함
+      - 가장 멋짐 점은 '4-DOF(x, y, z, yaw)'만 최적화한다는 것임. IMU가 중력을 게속 느끼고 있기 때문에 로봇의 기울어짐(Roll, Pitch)은 이미 절대적으로 정확하게 알고 있으므로, 굳이 계산을 낭비하지 않는 것임
+     
+### ✅ 결론
+
+- 내 개인 연구 주제에도 연관성이 있는 논문으로 판단되어 계속 읽으면 될듯
 
 <p><br></p>
 
