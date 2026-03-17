@@ -46,7 +46,9 @@
 
 - 2. Overview
   - VINS-Mono의 전반적인 system은 아래 그림과 같음
-  - 
+  <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/Visual-InertialStateEstimatorDiagram.png" width="450"/>
+  
+  - VINS-Mono는 우선 Measurement Preprocessing 과정을 거침. 이미지로부터 feature를 뽑아내고, Tracking을 하면서 연속적인 두 이미지 사이에 IMU Measurements를 Preintegrated하는 과정을 거침
 
 ### ✅ 결론
 
