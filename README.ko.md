@@ -19,6 +19,23 @@
 
 ---
 
+## 2026년 3월 16일
+
+### 📝 할 일 (2026-03-13)
+
+- [X] VINS 논문 읽기
+
+### 📌 메모
+
+- OpenVINS의 근원이 VINS의 논문을 찾아서 이 논문을 본격적으로 읽기로 결정
+- [VINS-Mono: A Robust and Versatile Monocular Visual-Inertial State Estimator](https://arxiv.org/pdf/1708.03852)
+  - 1. VINS-Mono의 핵심 철학: '모든 것을 한 번에 묶어서 푼다(Tightly-Coupled)'
+  - : 과거에는 카메라가 계산한 위치 따로, IMU가 예측한 위치 따로 구해서 대충 섞는 방식(Loosely-Coupled)을 썼음. 하지만 VINS-Mono는 카메라가 본 특징점 오차(Vision-Residual)와 IMU가 측정한 가속도/각속도 오차(IMU Residual)를 하나의 거대한 방정식으로 묶어서 동시에 최적화함. 이 방식을 'Tightly-Coupled'라고 부름.
+
+<p><br></p>
+
+---
+
 ## 2026년 3월 13일
 
 ### 📝 할 일 (2026-03-13)
