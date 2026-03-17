@@ -27,6 +27,27 @@
 
 ### 📌 메모
 
+- 1. Introduction
+  - VINS-Mono는 Monocular camera와 IMU를 결합했을 때 단순히 카메라를 썼을 때보다, 여러 장점이 있다고 소개함
+    - Scale 값을 얻을 수 있음(Roll, Pitch angle도 얻을 수 있음)
+    - 카메라쪽에서 Tracking하기 어려운 환경(Illumination Change, Textureless Area, or Motion Blur)에서도 IMU 센서의 도움을 받아 Tracking을 수행할 수 있음
+    - Camera, IMU 모두 저가로 구입할 수 있는 센서
+  - 이러한 장점이 있는 반면 큰 Issue들도 존재
+    - 초기화 과정이 힘듦
+      - : 직접 거리를 측정할 수 있는 센서가 없기 때문에, Visual Structure와 Inertial Measurement의 결합이 어려움
+    - VINS(Visual-Inertial Navigation System)은 Non-linear한 System
+      - : 대부분의 경우 시스템은 고정 위치에서 시작해야 하며 처음에는 천천히 조심스럽게 움직여야 하므로 실제로 사용이 제한됨
+    - VIO(Visual-Inertial Odometry)의 경우, drift 현상이 필연적임
+  - 따라서 이런 Issue들을 해결하기 위해 VINS-Mono에서는 다음과 같은 Contribution이 존재함
+    - 초기 상태(Initial States)를 모르더라도 초기화할 수 있는 방법을 제안
+    - Tightly-Coupled 방식의 Sensor Fusion, Optimization-based Estimation 방법
+    - 실시간이 보장된 Relocaization and 4 DOF(Degrees-Of-Freedom) global pse graph optimization
+    - pose graph를 저장하고 불러오고 다른 local pose graph와 합칠 수 있음
+
+- 2. Overview
+  - VINS-Mono의 전반적인 system은 아래 그림과 같음
+  - 
+
 ### ✅ 결론
 
 <p><br></p>
