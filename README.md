@@ -114,10 +114,10 @@
   - 1. Core philosophy of VINS-Mono: 'Solve everything together (Tightly-Coupled)'
     - In the past, loosely-coupled approaches were used where position calculated by camera and position predicted by IMU were computed separately and then roughly combined. However, VINS-Mono combines feature points seen by the camera and IMU prediction into one big optimization problem and solves them simultaneously
   - 2. The paper's 4-stage pipeline (flowchart)
-    - 1. Measurement Preprocessing (전처리)
+    - 1. Measurement Preprocessing
       - Vision: uses KLT algorithm to track feature points in incoming images
       - IMU Pre-Integration: IMU is much faster than camera. The technique of accumulating numerous IMU data between camera frames into one unified value beforehand. This is the key to real-time performance
-    - 2. Initialization (초기화)
+    - 2. Initialization
       - Using only one monocular camera, actual distance (scale) cannot be known
       - VINS-Mono proposes a powerful algorithm that succeeds in initialization even while the robot is moving on-the-fly, not just at rest. It combines the rough skeleton drawn by the camera with IMU measurements
     - 3. Sliding Window-based Local VIO
