@@ -19,13 +19,156 @@
 
 ---
 
-## March 13, 2026
+## March 17, 2026
 
-### 📝 To-Do (03/12/2026)
+### 📝 To-Do (2026-03-17)
+
+- [X] Read VINS paper
 
 ### 📌 Notes
 
+- 1. Introduction
+  - VINS-Mono combines monocular camera and IMU and has several advantages compared to using just a camera
+    - Can obtain scale values (and also obtain roll, pitch angles)
+    - Can perform tracking with the help of IMU sensors in environments where camera tracking is difficult (illumination change, textureless area, or motion blur)
+    - Both camera and IMU are low-cost sensors that can be purchased inexpensively
+  - While these advantages exist, there are also major issues
+    - Initialization process is challenging
+      - Since there is no sensor that can directly measure distance, combining visual structure and inertial measurement is difficult
+    - VINS (Visual-Inertial Navigation System) is a non-linear system
+      - In most cases, the system must start from a fixed location and initially move slowly and carefully, so practical use is limited
+    - VIO (Visual-Inertial Odometry) inevitably experiences drift phenomena
+  - Therefore, to address these issues, VINS-Mono has the following contributions
+    - Proposes a method for initialization even without knowing initial states
+    - Tightly-coupled sensor fusion and optimization-based estimation method
+    - Real-time guaranteed relocalization and 4 DOF (degrees-of-freedom) global pose graph optimization
+    - Can save, load, and merge pose graphs with other local pose graphs
+
+- 2. Overview
+  - The overall system of VINS-Mono is shown in the figure below
+  <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/Visual-InertialStateEstimatorDiagram.png" width="450"/>
+  
+  - VINS-Mono first goes through a Measurement Preprocessing process. Features are extracted from images, and while tracking, IMU measurements are preintegrated between two consecutive images
+  - After the Measurement Preprocessing process, it undergoes an initialization process. It calculates all the values needed for subsequent non-linear optimization. For example, pose, velocity, etc.
+  - With the initialized values, the Visual-Inertial Odometry Module with the Relocalization Module uses pre-integrated IMU measurements and feature observations using a tightly-coupled approach
+  - VINS-Mono proposes methods for initializing with monocular camera and IMU values, methods for selecting keyframes, methods for performing good tracking, and includes loop closure and pose graph optimization
+  - The notation used in this paper is as follows:
+    - $()^c$ : camera frame
+    - $()^w$ : world frame
+    - $()^b$ : IMU frame
+    - $q$ : quaternion, $R$ : Rotation Matrix
+    - $p$ : Translation vector
+    - $b_k$ : IMU (Body) frame in the k-th image
+    - $c_k$ : Camera frame in the k-th image
+    - $\otimes$ : Quaternion multiplication
+    - $\hat{(\cdot)}$ : estimated value or noisy measurement
+   
+- 3. Measurement Preprocessing
+  - Looking in detail at the preprocessing process of visual and IMU measurements, visual measurement involves attempting tracking in consecutive images and extracting new features in the current frame
+  - Vision Processing Front End
+    - When a new image arrives, KLT Sparse Optical Flow Algorithm is performed. To find features, the GoodFeatureToTrack() function from OpenCV is used. This function can efficiently track about 100-300 feature points
+      - KLT Sparse Optical Flow is the core algorithm in VINS-Mono's visual preprocessing stage that tracks where previously found feature points go in the next frame
+        - 3 assumptions of the KLT algorithm
+          1. Brightness Constancy: When the camera moves over a very short time, the brightness or color of a specific object does not change
+          2. Small Motion: Since the time is short, objects and pixels are assumed to move only slightly
+          3. Spatial Coherence: This is the most core idea of KLT. Tracking a single pixel alone is prone to failure due to noise. So neighboring pixels are considered together to maintain spatial coherence
+        - Why "Sparse" Optical Flow?
+          => Computing the motion of all 2 million pixels in the screen is called 'Dense Optical Flow'. However, this requires too much computation to operate in real-time
+        - So VINS-Mono selects only about 100-300 distinct feature points like corners that are easy to track on the screen. The computational load is dramatically reduced
+      - RANSAC algorithm is used to remove outliers, and the extracted image features are projected onto a unit sphere
+        - RANSAC (Random Sample Consensus) is a method that filters out 'fake data (outliers)' mixed in numerous data and finds only 'real data (inliers)' to obtain the correct answer
+        - While tracking feature points with KLT, the camera may follow a moving car instead of moving itself, or incorrectly track due to light reflection
+          - What RANSAC does in VINS-Mono
+          - VINS-Mono performs this process among KLT-tracked points
+            - Input: hundreds of matched feature point pairs between previous and current frames
+            - Hypothesis: randomly select a few points to create a model (like Fundamental Matrix) that says "the camera probably rotated and moved like this"
+            - Verification: when the model is applied, check if the remaining points agree by saying "yes, I'm around that position too!"
+            - Result: feature points that don't match the actual camera motion (outliers) are ruthlessly removed at this point
+          - Why RANSAC is good
+            - Most algorithms try to average all data to calculate. So if there's even one huge error (outlier) in the data, the result is affected
+            - On the other hand, RANSAC takes the strategy of "there will inevitably be fakes mixed in, so let's try several times until we're lucky enough to pick only real ones". So even if half the data consists of outliers, it can find the correct answer
+      - During this process, keyframes are also selected using two criteria
+        - If the parallax (pixel difference in features) between Last Frame and Current Frame exceeds a certain threshold, it is distinguished as a new keyframe
+        - Distinguished by tracking quality
+      - The pixel difference between features is expressed as parallax here. The reason for selecting this criterion is to secure a sufficient number of features when triangulation is performed
+      - Tracking quality can be judged by the number of visual feature points. If the number of tracking feature points falls below a certain threshold, new features are extracted
+
 ### ✅ Conclusion
+
+- Continue reading...
+
+<p><br></p>
+
+---
+
+## March 16, 2026
+
+### 📝 To-Do (2026-03-16)
+
+- [X] Read VINS paper
+
+### 📌 Notes
+
+- Found and decided to seriously read the VINS paper that is the origin of OpenVINS
+- [VINS-Mono: A Robust and Versatile Monocular Visual-Inertial State Estimator](https://arxiv.org/pdf/1708.03852)
+  - 1. Core philosophy of VINS-Mono: 'Solve everything together (Tightly-Coupled)'
+    - In the past, loosely-coupled approaches were used where position calculated by camera and position predicted by IMU were computed separately and then roughly combined. However, VINS-Mono combines feature points seen by the camera and IMU prediction into one big optimization problem and solves them simultaneously
+  - 2. The paper's 4-stage pipeline (flowchart)
+    - 1. Measurement Preprocessing (전처리)
+      - Vision: uses KLT algorithm to track feature points in incoming images
+      - IMU Pre-Integration: IMU is much faster than camera. The technique of accumulating numerous IMU data between camera frames into one unified value beforehand. This is the key to real-time performance
+    - 2. Initialization (초기화)
+      - Using only one monocular camera, actual distance (scale) cannot be known
+      - VINS-Mono proposes a powerful algorithm that succeeds in initialization even while the robot is moving on-the-fly, not just at rest. It combines the rough skeleton drawn by the camera with IMU measurements
+    - 3. Sliding Window-based Local VIO
+      - Optimization-based approaches have the disadvantage of requiring too much computation
+      - To solve this, it discards old data and uses the Sliding Window technique of keeping only the recent N critical frames (Key Frames) in the window and optimizing
+      - When discarding old data from the window, mathematical technique called Marginalization preserves the information contained in past data as Prior
+    - 4. 4-DOF Global Optimization (Relocalization & Pose Graph Optimization)
+      - No matter how well optimized, error accumulates over long distances
+      - When already-visited places are recognized using DBoW2 (Loop Detection), the current location is corrected
+      - The most impressive part is that only '4-DOF (x, y, z, yaw)' is optimized. Since the IMU continuously feels gravity, the robot's tilt (roll, pitch) is already absolutely accurate without additional optimization
+     
+### ✅ Conclusion
+
+- This paper is judged to have relevance to my personal research topic, so continuing to read should be beneficial
+
+<p><br></p>
+
+---
+
+## March 13, 2026
+
+### 📝 To-Do (03/13/2026)
+
+- [X] Test with a dataset other than the one we did today
+- [X] Study OpenVINS accurately
+
+### 📌 Notes
+
+- Selected and tested 3 datasets from those provided by OpenVINS
+  - The rosbag for the test dataset was not downloading, so I converted it to rosbag2 after downloading and then performed rosbag play
+- OpenVINS, as the name suggests, is an acronym for 'Open-Source Visual-Inertial Navigation System', which combines a camera (visual) and an inertial measurement device (IMU, inertial) to estimate the robot's position and orientation
+  - 1. OpenVINS Core: MSCKF-based filter method
+    - The biggest feature is using the MSCKF (Multi-State Constraint Kalman Filter) algorithm
+      - => MSCKF uses IMU and camera sensors to perform measurement updates on fixed features (combining new noisy sensor measurements with previous prediction states to improve and refine the state)
+    - Difference from ORB-SLAM: ORB-SLAM primarily uses 'optimization' based approach to draw the entire map and determine position, while OpenVINS is 'filter' based
+    - Sliding Window: Instead of keeping all historical data, maintains only a few recent camera frames while updating the state. So computational load is low and is suitable for real-time systems
+      
+  - 2. Why use OpenVINS?
+    - Online Calibration: extrinsics (relative position between camera and IMU) or time offsets are updated in real-time while the robot is moving
+    - Extensibility: modular structure makes it very easy to add new sensors or replace parts of algorithms
+    - Accuracy and Speed: despite being EKF (Extended Kalman Filter) based, shows high precision comparable to optimization-based algorithms. Especially for drones and robots with limited resources
+      
+  - 3. OpenVINS Architecture
+    - Feature Tracking: finds and tracks corners like FAST mentioned earlier from camera images
+    - IMU Preintegration: accumulates accelerometer/gyro data from IMU to predict the robot's rough movement
+    - State Update: combines camera information and IMU prediction to finalize the robot's accurate position (x, y, z) and attitude (q)
+
+### ✅ Conclusion
+
+- The sense of OpenVINS was not completely grasped, so reading related papers
+- Implement ORB-SLAM
 
 <p><br></p>
 
@@ -35,14 +178,14 @@
 
 ### 📝 To-Do (03/12/2026)
 
-- [X] Test the OpenVINS algorithm
+- [X] Test the OpenVINS platform
 
 ### 📌 Notes
 
-- I used the data set provided by EuRoC, but I couldn't find it at this point, so I tested it based on the public data provided by KITTI, but I couldn't see anything on the rviz screen and continuous error on the terminal running the launcher file
-  - The cause of the problem shows that the KITTI dataset violated static initalization conditions due to initial operation with [Init]: failed static init: platform moving too much, and the original calibration value of KITTI is different from the Kalibr format used by OpenVINS. It does not just change the name of the topic, but if the tranformation matrix (T) between the acceleration/gyro noise model for KITTI and the camera-IMU is not directly calculated and inserted, the filter will immediately diverge
-- While I was combing through the tutorials provided by OpenVINS, the data(ros1 cannot be downloaded at this time, https://docs.openvins.com/gs-datasets.html <- conference) can be downloaded as a zip file. There is a command that can convert the ros2 file to ros1 after downloading, so I converted it and tested it successfully
-
+- I used the dataset provided by EuRoC, but I couldn't find it at this point, so I tested it based on the public data provided by KITTI, but I couldn't see anything on the rviz screen and encountered continuous errors
+  - When I investigated the cause of the problem, the terminal running the subscribe.launch file showed [Init]: failed static init: platform moving too much, which means initial state estimation failed in the KITTI dataset because the platform was moving too much
+- While thoroughly examining the tutorials provided by OpenVINS, I found that data (ros1 cannot be downloaded at this point, https://docs.openvins.com/gs-datasets.html <- reference) can be downloaded as zip files based on ros2 standard, so I plan to test with different datasets
+  
 <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/OpenVINS(KITTI).png" width="250"/>
 <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/OpenVINS(EuRoC).png" width="250"/>
 
@@ -64,15 +207,15 @@
 
 ### 📌 Notes
 
-- If I switch to Visual SLAM based, what I want is ORB-SLAM, but I decided to test this first by recommending the OpenVINS project to lab member who has experience in switching to Visual SLAM based because there are many dependence problems during installation (https://github.com/rpng/open_vins <- Reference)
+- If I switch to Visual SLAM based, what I want is ORB-SLAM, but I decided to test this first by recommending the OpenVINS project to a lab member who has experience in switching to Visual SLAM based
   - It was very difficult because I experienced several out-of-memory problems in the middle, but I successfully ran OpenVINS simulation
-  - The two screens after completion of the drive are performance indicators and visualization results showing how accurately OpenVINS estimates the robot's movement(trajectory)
-  - First Image : Trajectory visualization (a drawing of the robot's path on a 2D plane)
-  - Second Image : estimation accuracy (a ddta window that numerically shows "how different is the position I calculated from the real thing?" as the simulation goes back to real time)
+  - The two screens after completion of the drive are performance indicators and visualization results showing how accurately OpenVINS estimates the robot's movement (trajectory)
+  - First Image: Trajectory visualization (a drawing of the robot's path on a 2D plane)
+  - Second Image: estimation accuracy (a data window that numerically shows "how different is the position I calculated from the real thing?" as the simulation runs in real-time)
 <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/Trajectory%20Visualization.jpeg" width="250"/>
 <img src="https://github.com/Kim-SeongGeon/AISL/blob/main/Image/Estimation%20Accuracy.png" width="250"/>
 
-- The paper received from the professor presents a non-repetitive VSLs-based technique that significantly improves the accuracy and efficiency of feature map merging in multi-robot systems, which makes an important contribution to real-time robot system implementation
+- The paper received from the professor presents a non-repetitive VSLs-based technique that significantly improves the accuracy and efficiency of feature map merging in multi-robot systems
 
 ### ✅ Conclusion
 
@@ -92,20 +235,20 @@
 
 ### 📌 Notes
 
-- The professor also liked the topics I thought of and gave me advice on the second one because another lab member is doing it, so I will proceed with the 1st and 3rd in a good relationship
-  - In the first topic, the 'communication constraint' condition lacks a lot of knowledge in the field of communication and thus passes (or changes to some constraint)
-  - Take the first topic as the main subject and expand it to the third topic, the third is the master's papers, and the mission plan is not to use AI
-  - Sparse(including feature) Map Merging appears to be a necessary and practical study in the commercial and defense sectors
-  - The test starts with the simulation(Matlab, etc.) with the algorithm as important
-  - Catch the baseline well
-  - Try ICP+VSLs combination well
+- The professor also liked the topics I thought of and gave advice since another lab member is working on the second one, so I will proceed by connecting the 1st and 3rd topics well
+  - In the first topic, the 'communication constraint' condition is passed due to insufficient knowledge in the communication field (or changed to some constraints)
+  - Take the first topic as the main subject and expand it to the third topic; the third is the master's thesis, and the mission plan doesn't necessarily need to use AI
+  - Sparse (including feature) map merging appears to be a necessary and practical study in both commercial and defense sectors
+  - Tests start with simulation (Matlab, etc.) with algorithms as the focus
+  - Establish baselines well
+  - Try the ICP+VSLs combination well
   - Geometric information (location information of landmarks) + class information
-- I tried SLAM test based on public dataset, but I ran into a lot of unexpected problems and asked for help from Lab member who studied about it tomorrow
+- I tried SLAM testing based on public datasets, but encountered many unexpected problems and asked for help from a lab member who had studied it
 
 ### ✅ Conclusion
 
-- Read and study the papers that the professor sent and recommeded
-- Tomorrow, learn SLAM test based on public dataset and make sure it's mine
+- Read and study the papers that the professor sent and recommended
+- Tomorrow, learn SLAM testing based on public datasets and make it my own
 
 <p><br></p>
 
@@ -113,38 +256,42 @@
 
 ## March 09, 2026
 
-### 📝 To-Do (03/09/2025)
+### 📝 To-Do (03/09/2026)
 
 - [X] Research to choose an accurate personal research topic
 
 ### 📌 Notes
 
-- I have received a multi-robot project that I have been doing since I was an undergraduate research student in the first year of my master's project, so I think I should conduct personal research in this field       
-- Since employment in a defense company is my ultimate goal, I investigate what kind of SW, R&D talent I want from a defense company should select to enter the company and do it well
-  - If I think about employment first, you need to understand C++/Python-based algorithm implementation capabilties, practical projects and papers related to 'unmanned/robot', and practical SW architectures that can be implanted in various robot platforms (e.g., 4th leg on the ground, UGV, USV, etc.)
-  - Environmental characteristics considered when using multi-robot SLAM in defence or battlefield include GNSS vulnerability (indoor, underground, disaster/electric field, electronic warfare environment), communication delay and disruption (distributed and robust SLAM and clustering required), mixing multiple heterogeneous robots (four-legged walking, UGV, drone, USV, etc.) and sensor restrictions or partially obscured (smoke, dust, dark environment, limited FoV LiDAR, etc.)
-  - Among them, if the thesis and demonstration are implemented within 2 years of the master's degree, 'Distributed Multi-Robot SLAM and Reconnaissance Mission Plan Considering Communication and Sensor Constraints' is a big topic, and SLAM is attached in the 1st year and mission plan/group is appropriate in the 2nd year
+- I have been working on multi-robot projects since I was an undergraduate research student, and in my first year of the master's program, I decided I should conduct personal research in this field
+- Since employment in a defense company is my ultimate goal, I investigated what kind of SW R&D talent the defense companies I want to join are looking for, and what topics I should choose to do well at that company
+  - If I prioritize employment, I need C++/Python-based algorithm implementation ability, practical projects and papers related to 'unmanned/robotics', and diverse robot/system architecture understanding
+  - Environmental characteristics considered when using multi-robot SLAM in defense or battlefield include GNSS vulnerability (indoor, underground, disaster/warfare zones, electronic warfare), communication delays and disconnections (distributed operation, bandwidth limitations), sensor limitations (limited FoV LiDAR, noisy IMU, camera occlusion), and the need for rapid deployment and robustness
+  - Based on this, I narrowed down to about 3 topics that fit well with defense company robots/unmanned systems and are suitable for papers and portfolios
+  1. Distributed Multi-Robot SLAM considering communication constraints: robots share partial maps and poses without a central server (or with minimal dependence), and can reliably perform collaborative mapping even during communication disconnections or delays
+  2. Robust Multi-Robot SLAM with limited sensors and fields of view: cooperation and robust loop closure in defense environments with common sensor compromises (limited FoV LiDAR, noisy IMU, camera occlusion)
+  3. Multi-Robot SLAM-based swarm mission planning (with MUM-T in mind): directly utilize multi-SLAM results (shared maps, uncertainty of each robot) for swarm path planning, exploration, and surveillance mission allocation
+  - Among these, if thesis and demo implementation are to be done within 2 years of master's degree, 'Distributed Multi-Robot SLAM and Reconnaissance Mission Planning Considering Communication and Sensor Constraints' could be a comprehensive main topic that combines 1st and 3rd well
  
-- Brief Master's 1st to 2nd Year Roadmap (Research + Job Preparation)
-  - Year 1: Laying the foundation + 1 paper level results
+- Brief Master's 1st-2nd Year Roadmap (Research + Job Preparation)
+  - Year 1: Building foundation + 1 paper-level results
     - 0-6 Months
-      - Theoretical/Code: Practice analyzing and implementing a multi-robot SLAM system verified such as ORB-SLAM series, pose graph SLAM, and LAMP/LAMP2.0
-      - Language/Tools: C++/Python, ROS2, Git, Basic PCL/OpenCV/Robot Simulator (Gazebo/Ignition, Isaac Sim, etc.)
+      - Theory/Code: Analyze and practice implementing verified multi-robot SLAM systems like ORB-SLAM series, pose graph SLAM, LAMP/LAMP2.0
+      - Language/Tools: C++/Python, ROS2, Git, basic PCL/OpenCV/robot simulator (Gazebo/Ignition, Isaac Sim, etc.)
     - 6-12 Months
-      - Distributed/semi-centralized SLAM implementation in small multi-robot (e.g., three UGVs or one UGV + one drone) simulations
-      - Aiming to write a paper or poster to a Korean society
-  - Year 2: Expanding to Multi-Robot + Cluster/Mission Plan
+      - Distributed/semi-centralized SLAM implementation in small multi-robot (e.g., 3 UGVs or 1 UGV + 1 drone) simulations
+      - Target: present paper or poster at a domestic academic conference
+  - Year 2: Expanding to Multi-Robot + Swarm/Mission Planning
     - 13-18 Months
-      - Configuring a simulation environment with sensor constraints (limited FoV LiDAR, camera occlusion, communication dropout)
-      - Improve robust loop closure, traffic minimization strategies, and distributed optimization in this environment
+      - Configure simulation environment with sensor constraints (limited FoV LiDAR, camera occlusion, communication dropout)
+      - Improve robust loop closure, communication minimization strategies, and distributed optimization in this environment
     - 18-24 Months
-      - Development of route planning and role-sharing algorithms for reconnaissance/monitoring missions using SLAM results
+      - Develop route planning and role allocation algorithms for reconnaissance/surveillance missions using SLAM results
       - International conference + Master's thesis completion
 
 ### ✅ Conclusion
 
-- First of all, I will have a serious conversation with the professor about the three ways I thought and find the exact direction
-- And with a dataset that can be used easily in the laboratory, I need to get a sense of SLAM with a simple test
+- First, I will have a serious conversation with the professor about the three approaches I thought of and establish the exact direction
+- And with datasets easily available in the lab, I need to get a feel for SLAM with simple testing
 
 <p><br></p>
 
